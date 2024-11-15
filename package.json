@@ -15,18 +15,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mebtte/animal_photosynthesis.git"
+    "url": "git+https://github.com/mebtte/animal-photosynthesis.git"
   },
   "devDependencies": {
     "cheerio": "^1.0.0-rc.6",
-    "ejs": "^3.1.6",
+    "ejs": "^3.1.10",
     "fontmin": "^0.9.8",
     "front-matter": "^4.0.2",
     "fs-extra": "^10.0.0",
     "http-server": "^0.12.3",
     "md5": "^2.3.0",
     "ora": "^5.1.0",
-    "prettier": "^2.2.1",
     "showdown": "^1.9.1",
     "yargs": "^17.0.1"
   }
