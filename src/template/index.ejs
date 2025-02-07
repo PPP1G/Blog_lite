@@ -8,27 +8,28 @@
   <title><%= config.title %></title>
   <meta name="description" content="<%= config.description %>" />
 
-  <link rel="preload" href="<%= config.public_path %>/<%= allArticleTitleFontPath %>" as="font" crossOrigin="anonymous" />
+  <link rel="preload" href="/<%= allArticleTitleFontPath %>" as="font" crossOrigin="anonymous" />
   <style>
     @font-face {
       font-family: article_title;
-      src: url(<%= config.public_path %>/<%= allArticleTitleFontPath %>);
+      src: url(/<%= allArticleTitleFontPath %>);
     }
 
     .article-list {
-      max-width: var(--content-max-width);
-      margin: 40px auto;
-      padding: 0 30px;
+      max-inline-size: var(--content-max-width);
+      margin-block: 40px;
+      margin-inline: auto;
+      padding-inline: 30px;
     }
     .article-item {
       list-style: none;
       display: block;
-      margin: 15px 0;
+      margin-block: 15px;
     }
     .article-title {
       display: inline;
       font-weight: normal;
-      margin: 0 10px 0 0;
+      margin-block-start: 10px;
       padding: 0;
       color: var(--primary-color);
       font-size: 18px;
@@ -56,9 +57,11 @@
     <% articleList.forEach(article => { %>
       <li class="article-item">
         <h2 class="article-title">
-          <a href="<%= config.public_path %>/<%= article.id %>"><%= article.title %></a>
+          <a href="/<%= article.id %>"><%= article.title %></a>
         </h2>
-        <time class="article-time"><%= article.publishTime %></time>
+        <% if (article.publishTime) { %>
+          <time class="article-time"><%= article.publishTime %></time>
+        <% } %>
       </li>
     <% }) %>
   </ul>

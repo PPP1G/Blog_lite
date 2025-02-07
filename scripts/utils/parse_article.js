@@ -1,9 +1,7 @@
 import * as path from 'path';
-
 import showdown from 'showdown';
 import frontMatter from 'front-matter';
 import cheerio from 'cheerio';
-
 import fs from './fs.js';
 import directory from './directory.js';
 import toBuild from './to_build.js';
@@ -21,7 +19,10 @@ export default async (id) => {
     return null;
   }
   const { attributes, body: mdBody } = frontMatter(mdText);
-  const mdParser = new showdown.Converter({ tables: true });
+  const mdParser = new showdown.Converter({
+    tables: true,
+    strikethrough: true,
+  });
   const html = mdParser.makeHtml(mdBody);
   const $ = cheerio.load(html);
 
@@ -35,10 +36,7 @@ export default async (id) => {
       }
       const localPath = path.join(articleDir, resourcePath);
       const filename = await toBuild(localPath);
-      $(resourceNode).attr(
-        type,
-        `${config.public_path}/${filename}`,
-      );
+      $(resourceNode).attr(type, `/${filename}`);
     }
   };
   await buildLocalResource('src');
@@ -55,6 +53,20 @@ export default async (id) => {
         <a href="${src}" target="_blank">
           <img src="${src}" alt="${alt}" title="${alt}" loading="lazy" />
         </a>
+        ${alt ? `<figcaption>${alt}</figcaption>` : ''}
+      </figure>
+    `);
+  }
+
+  // video
+  const videoNodeList = $('video').toArray();
+  for (const videoNode of videoNodeList) {
+    const node = $(videoNode);
+    const src = node.attr('src');
+    const alt = node.attr('alt') || '';
+    node.replaceWith(`
+      <figure class="figure-video">
+        <video src="${src}" loading="lazy" controls></video>
         ${alt ? `<figcaption>${alt}</figcaption>` : ''}
       </figure>
     `);
@@ -99,16 +111,18 @@ export default async (id) => {
     node.html(node.html());
   }
 
-  return {
+  const article = {
     id,
     title: attributes.title || '',
     // 取 markdown 内容的前 150 个字符作为页面的 description
     description:
       mdBody.substring(0, 150).replace(/\s/gm, ' ') + '...',
-    publishTime: attributes.publish_time || '2000-01-01',
+    publishTime: attributes.publish_time,
     updates: attributes.updates || [],
-    hidden: attributes.hidden || false,
+    hidden:
+      !attributes.publish_time || attributes.hidden || false,
     content: $.html(),
     mdText,
   };
+  return article;
 };
